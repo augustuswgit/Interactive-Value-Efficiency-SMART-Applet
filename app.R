@@ -50,8 +50,8 @@ ui <- dashboardPage(
       tabItem(tabName = "home",
               # Centered placeholder info
               div(
-                style = "text-align: center; margin-bottom: 20px;",
-                p("placeholder information text")
+                style = "text-align: center; margin-bottom: 20px; font-size: 30px;",
+                p("SMART Intervention Table")
               ),
               # Centered static table
               div(
@@ -117,13 +117,19 @@ ui <- dashboardPage(
               # Centered dropdown for category selection
               div(
                 style = "display: flex; justify-content: center; margin-bottom: 20px;",
-                selectInput(
-                  inputId = "time_select",
-                  label = "Select Category:",
-                  choices = c("Time.3", "Time.6", "Area.under.Curve"),
-                  selected = "Time.3",
-                  width = "200px"
-                )
+                # Hidden dropdown (kept so server logic works)
+                tags$div(style = "display:none;",
+                         selectInput(
+                           inputId = "time_select",
+                           label = "Select Category:",
+                           choices = c("Time.3","Time.6", "Area.under.Curve"),
+                           selected = "Time.3",
+                           width = "200px"
+                         )
+                ),
+                
+                # Visible replacement text
+                h3("Time 3", style = "font-size: 50px;")
               ),
               
               # Row with plot on the left (wide) and controls on the right (narrow)
@@ -226,6 +232,7 @@ ui <- dashboardPage(
 
 # Server function to handle the logic
 server <- function(input, output, session) {
+  updateSelectInput(session, "time_select", selected = "Time.3")
   # This reactive filters and calculates costs for the data
   filtered_data <- reactive({
     # Make sure we have a time selection before proceeding
