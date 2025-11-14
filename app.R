@@ -4,7 +4,7 @@ library(plotly)
 library(dplyr)
 library(ggplot2)
 library(shinydashboard)
-
+# NOTE: In this code ADI and EI refer to the same concept (EI - embedded intervention, ADI - adaptive intervention)
 # Analyzed SMART Data
 load("smartshinytestdataedit.RData")
 
@@ -13,7 +13,6 @@ binded_data2$ID <- rownames(binded_data2)
 binded_data2 <- binded_data2 %>% filter(!is.na(Cost))
 binded_data2$CostDisplay <- binded_data2$Cost
 binded_data2$CostHover <- binded_data2$Cost
-
 # Getting rid of rows where ID has "vs" in it
 binded_data2 <- binded_data2 %>% filter(!grepl("vs", ID, ignore.case = TRUE))
 
@@ -60,7 +59,7 @@ ui <- dashboardPage(
                   style = "border-collapse: collapse; border: 1px solid #999;",
                   tags$thead(
                     tags$tr(
-                      tags$th(style = "border:1px solid #999; padding:8px;", "ADI"),
+                      tags$th(style = "border:1px solid #999; padding:8px;", "EI"),
                       tags$th(style = "border:1px solid #999; padding:8px;", "Stage 1"),
                       tags$th(style = "border:1px solid #999; padding:8px;", "After 1 month:"),
                       tags$th(style = "border:1px solid #999; padding:8px;", "Stage 2")
@@ -129,7 +128,7 @@ ui <- dashboardPage(
                 ),
                 
                 # Visible replacement text
-                h3("Time 3", style = "font-size: 50px;")
+                h3("Value Efficiency Plot", style = "font-size: 50px;")
               ),
               
               # Row with plot on the left (wide) and controls on the right (narrow)
@@ -144,16 +143,16 @@ ui <- dashboardPage(
                   sliderInput(
                     inputId = "slider1_plot",
                     label = "Cost to implement MI-IOP",
-                    min = 50,
-                    max = 400,
+                    min = 100,
+                    max = 600,
                     value = 100,
                     width = "100%"
                   ),
                   sliderInput(
                     inputId = "slider2_plot",
                     label = "Cost to implement MI-PC",
-                    min = 50,
-                    max = 400,
+                    min = 100,
+                    max = 600,
                     value = 100,
                     width = "100%"
                   ),
@@ -173,7 +172,7 @@ ui <- dashboardPage(
                       class = "table-auto border-collapse border border-gray-400",
                       tags$thead(
                         tags$tr(
-                          tags$th("ADI", class = "border px-4 py-2"),
+                          tags$th("EI", class = "border px-4 py-2"),
                           tags$th("Stage 1", class = "border px-4 py-2"),
                           tags$th("After 1 month:", class = "border px-4 py-2"),
                           tags$th("Stage 2", class = "border px-4 py-2")
@@ -280,14 +279,14 @@ server <- function(input, output, session) {
       p_nr_1 <- 1 - p_r_1
       exp_c_1 <- p_r_1 * input$slider1_plot + p_nr_1 * (input$slider1_plot + input$slider2_plot + input$slider3_plot)
       mean_c_1 <- mean(exp_c_1)  # Average cost
-      error_c_1 <- sd(exp_c_1)  # Standard deviation as error
+      error_c_1 <- 1.645*sd(exp_c_1)  # Standard deviation as error
       
       # For ADI 3: response prob and expected cost (no switch)
       p_r_3 <- rbeta(M, shape1 = 66 + 1, shape2 = 44 + 1)  # Beta for response rate
       p_nr_3 <- 1 - p_r_3
       exp_c_3 <- p_r_3 * input$slider2_plot + p_nr_3 * (2 * input$slider2_plot)
       mean_c_3 <- mean(exp_c_3)  # Average cost
-      error_c_3 <- sd(exp_c_3)  # Standard deviation as error
+      error_c_3 <- 1.645*sd(exp_c_3)  # Standard deviation as error
       
       # Applying the simulated values to the data
       data <- data %>% mutate(
@@ -416,16 +415,16 @@ server <- function(input, output, session) {
                           text = paste(
                             "<b>ID</b>: ", ID, "<br>",
                             "<b>Contrast Estimate</b>: ", round(ContrastEstimates, 2), "<br>",
-                            "<b>Cost</b>: ", CostHover, "<br>",
-                            "<b>Std Error</b>: ", round(ContrastStdErrors, 3), "<br>",
-                            "<b>ADI</b>: ", ADI, "<br>",
+                            "<b>Cost</b>: ", ifelse(ADI %in% c(2, 4), CostHover, round(CostDisplay, 3)), "<br>",
+                            "<b>Std Error</b>: ", round((((ContrastUpper95-ContrastLower95)/2)/1.1913), 3), "<br>", #converted to 90%ci
+                            "<b>EI</b>: ", ADI, "<br>",
                             "<b>Cost Error</b>: ", ifelse(ADI %in% c(2, 4), "undefined", round(CostError, 3))
                           ))) +
       geom_point(size = 3) +
       # Horizontal error bars for contrasts
       geom_errorbarh(
-        aes(xmin = ContrastEstimates - ContrastStdErrors,
-            xmax = ContrastEstimates + ContrastStdErrors),
+        aes(xmin = ContrastEstimates - (((ContrastUpper95-ContrastLower95)/2)/1.1913), # convert to 90% CI
+            xmax = ContrastEstimates + (((ContrastUpper95-ContrastLower95)/2))/1.1913),
         height = 10
       ) +
       # Vertical error bars for costs
@@ -435,11 +434,11 @@ server <- function(input, output, session) {
         width = 0.5  # A bit wider for visibility
       ) +
       # Custom shapes for ADI levels
-      scale_shape_manual(values = c(15, 16, 17, 18), name = "ADI", labels = c("1", "2", "3", "4")) +
+      scale_shape_manual(values = c(15, 16, 17, 18), name = "EI", labels = c("1", "2", "3", "4")) +
       scale_color_identity() +  # Use the colors we set
       labs(
-        title = paste(input$time_select, ": Cost vs Expected Treatment Readiness with Errors"),
-        x = "Expected Treatment Readiness",
+        #title = paste(input$time_select, ": Cost vs Expected Treatment Readiness with Errors"),
+        x = "Expected Treatment Readiness at 3 months",
         y = "Total Cost"
       ) +
       scale_y_continuous(breaks = seq(0, 1000, by = 100)) +
