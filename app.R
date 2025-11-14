@@ -27,7 +27,7 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem("Home", tabName = "home", icon = icon("home")),
       menuItem("Applet", tabName = "applet", icon = icon("bar-chart")),
-      menuItem("Github", icon = icon("github"), href = "https://github.com")
+      menuItem("Github", icon = icon("github"), href = "https://github.com/augustuswgit/Interactive-Value-Efficiency-SMART-Applet/tree/main")
     )
   ),
   
