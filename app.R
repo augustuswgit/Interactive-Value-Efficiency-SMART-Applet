@@ -19,7 +19,8 @@ binded_data2 <- binded_data2 %>% filter(!grepl("vs", ID, ignore.case = TRUE))
 # Setting up the UI with dashboard structure
 ui <- dashboardPage(
   # Dashboard header with the title
-  dashboardHeader(title = "Interactive Value Efficiency Plot"),
+  dashboardHeader(title = tags$div("Value Efficiency Visualizer",
+                                    style="font-size:14px; line-height:50px; padding:0; margin:0;")),
   
   # Sidebar menu for navigation
   dashboardSidebar(
@@ -50,19 +51,32 @@ ui <- dashboardPage(
               # Centered placeholder info
               div(
                 style = "text-align: center; margin-bottom: 20px; font-size: 13px;",
-                p("This applet presents a case study for the determination of value efficiency in a sequential multiple
-assignment randomized trial (SMART), loosely based on the ENGAGE trial (McKay et al., 2015). Among
-the set of alternative intervention versions in an optimization trial, an intervention is value efficient if it is
-expected to achieve more preferred effectiveness on the outcome(s) of interest than all alternative
-versions that cost the same or less.
-In the case study, we summarize the performance of the four embedded interventions in this SMART in
-terms of their expected effectiveness and their resource use, defined in terms of the cost to deliver the
-intervention. Costs are hypothetical; effectiveness data is simulated, based on real-world parameters
-from ENGAGE.
-The four alternative embedded interventions provide different courses of motivational interviewing (MI-
-IOP, MI-PC, or both), as summarized in the table below [or to the right? Wherever it is]. For more detail,
-see Strayhorn et al., Under review.")
-              ),
+                
+                p(style = "margin-bottom: 15px;",
+                  "This applet presents a case study for the determination of value efficiency in a sequential multiple
+     assignment randomized trial (SMART), loosely based on the ENGAGE trial (McKay et al., 2015).
+     Among the set of alternative intervention versions in an optimization trial, an intervention is value
+     efficient if it is expected to achieve more preferred effectiveness on the outcome(s) of interest than
+     all alternative versions that cost the same or less."
+                ),
+                
+                p(style = "margin-bottom: 15px;",
+                  "In the case study, we summarize the performance of the four embedded interventions in this SMART
+     in terms of their expected effectiveness and their resource use, defined in terms of the cost to
+     deliver the intervention. Costs are hypothetical; effectiveness data is simulated, based on 
+     real-world parameters from ENGAGE."
+                ),
+                
+                p(style = "margin-bottom: 15px;",
+                  "The four alternative embedded interventions provide different courses of motivational interviewing
+     (MI-IOP, MI-PC, or both), as summarized in the table below. For more detail, see Strayhorn et al.,
+     Under review."
+                ),
+                p(
+                  "McKay, J. R., Drapkin, M. L., Van Horn, D. H., Lynch, K. G., Oslin, D. W., DePhilippis, D., . . . Cacciola, J. S. (2015). Effect of patient choice in an adaptive sequential randomization trial of treatment for alcohol and cocaine dependence. Journal of consulting and clinical psychology, 83(6), 1021."
+                )
+              )
+              ,
               # Centered static table
               div(
                 style = "display: flex; justify-content: center; margin-bottom: 20px;",
@@ -427,7 +441,7 @@ server <- function(input, output, session) {
                             "<b>ID</b>: ", ID, "<br>",
                             "<b>Contrast Estimate</b>: ", round(ContrastEstimates, 2), "<br>",
                             "<b>Cost</b>: ", ifelse(ADI %in% c(2, 4), CostHover, round(CostDisplay, 3)), "<br>",
-                            "<b>Std Error</b>: ", round((((ContrastUpper95-ContrastLower95)/2)/1.1913), 3), "<br>", #converted to 90%ci
+                            "<b>90% CI Half-Width</b>: ", round((((ContrastUpper95-ContrastLower95)/2)/1.1913), 3), "<br>", #converted to 90%ci
                             "<b>EI</b>: ", ADI, "<br>",
                             "<b>Cost Error</b>: ", ifelse(ADI %in% c(2, 4), "undefined", round(CostError, 3))
                           ))) +
