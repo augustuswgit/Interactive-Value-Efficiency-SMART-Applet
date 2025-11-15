@@ -69,8 +69,7 @@ ui <- dashboardPage(
                 
                 p(style = "margin-bottom: 15px;",
                   "The four alternative embedded interventions provide different courses of motivational interviewing
-     (MI-IOP, MI-PC, or both), as summarized in the table below. For more detail, see Strayhorn et al.,
-     Under review."
+     (MI-IOP, MI-PC, or both), as summarized in the table below. For more detail, see [Under review; Reference moved for masked review]."
                 ),
                 p(
                   "McKay, J. R., Drapkin, M. L., Van Horn, D. H., Lynch, K. G., Oslin, D. W., DePhilippis, D., . . . Cacciola, J. S. (2015). Effect of patient choice in an adaptive sequential randomization trial of treatment for alcohol and cocaine dependence. Journal of consulting and clinical psychology, 83(6), 1021."
