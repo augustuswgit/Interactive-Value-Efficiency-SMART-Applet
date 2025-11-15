@@ -49,8 +49,19 @@ ui <- dashboardPage(
       tabItem(tabName = "home",
               # Centered placeholder info
               div(
-                style = "text-align: center; margin-bottom: 20px; font-size: 30px;",
-                p("SMART Intervention Table")
+                style = "text-align: center; margin-bottom: 20px; font-size: 13px;",
+                p("This applet presents a case study for the determination of value efficiency in a sequential multiple
+assignment randomized trial (SMART), loosely based on the ENGAGE trial (McKay et al., 2015). Among
+the set of alternative intervention versions in an optimization trial, an intervention is value efficient if it is
+expected to achieve more preferred effectiveness on the outcome(s) of interest than all alternative
+versions that cost the same or less.
+In the case study, we summarize the performance of the four embedded interventions in this SMART in
+terms of their expected effectiveness and their resource use, defined in terms of the cost to deliver the
+intervention. Costs are hypothetical; effectiveness data is simulated, based on real-world parameters
+from ENGAGE.
+The four alternative embedded interventions provide different courses of motivational interviewing (MI-
+IOP, MI-PC, or both), as summarized in the table below [or to the right? Wherever it is]. For more detail,
+see Strayhorn et al., Under review.")
               ),
               # Centered static table
               div(
