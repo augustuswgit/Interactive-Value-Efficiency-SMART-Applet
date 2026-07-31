@@ -4,6 +4,7 @@ library(plotly)
 library(dplyr)
 library(ggplot2)
 library(shinydashboard)
+
 # NOTE: In this code ADI and EI refer to the same concept (EI - embedded intervention, ADI - adaptive intervention)
 # Analyzed SMART Data
 load("smartshinytestdataedit.RData")
@@ -20,12 +21,12 @@ binded_data2 <- binded_data2 %>% filter(!grepl("vs", ID, ignore.case = TRUE))
 ui <- dashboardPage(
   # Dashboard header with the title
   dashboardHeader(title = tags$div("Value Efficiency Visualizer",
-                                    style="font-size:14px; line-height:50px; padding:0; margin:0;")),
+                                   style="font-size:14px; line-height:50px; padding:0; margin:0;")),
   
   # Sidebar menu for navigation
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Home", tabName = "home", icon = icon("home")),
+      # menuItem("Home", tabName = "home", icon = icon("home")), # COMMENTED OUT HOME AS REQUESTED
       menuItem("Applet", tabName = "applet", icon = icon("bar-chart")),
       menuItem("Github", icon = icon("github"), href = "https://github.com/augustuswgit/Interactive-Value-Efficiency-SMART-Applet/tree/main")
     )
@@ -46,96 +47,7 @@ ui <- dashboardPage(
     ),
     
     tabItems(
-      # Home tab: placeholder text and the static table
-      tabItem(tabName = "home",
-              # Centered placeholder info
-              div(
-                style = "text-align: center; margin-bottom: 20px; font-size: 13px;",
-                
-                p(style = "margin-bottom: 15px;",
-                  "This applet presents a case study for the determination of value efficiency in a sequential multiple
-     assignment randomized trial (SMART), loosely based on the ENGAGE trial (McKay et al., 2015).
-     Among the set of alternative intervention versions in an optimization trial, an intervention is value
-     efficient if it is expected to achieve more preferred effectiveness on the outcome(s) of interest than
-     all alternative versions that cost the same or less."
-                ),
-                
-                p(style = "margin-bottom: 15px;",
-                  "In the case study, we summarize the performance of the four embedded interventions in this SMART
-     in terms of their expected effectiveness and their resource use, defined in terms of the cost to
-     deliver the intervention. Costs are hypothetical; effectiveness data is simulated, based on 
-     real-world parameters from ENGAGE."
-                ),
-                
-                p(style = "margin-bottom: 15px;",
-                  "The four alternative embedded interventions provide different courses of motivational interviewing
-     (MI-IOP, MI-PC, or both), as summarized in the table below. For more detail, see [Under review; Reference moved for masked review]."
-                ),
-                p(
-                  "McKay, J. R., Drapkin, M. L., Van Horn, D. H., Lynch, K. G., Oslin, D. W., DePhilippis, D., . . . Cacciola, J. S. (2015). Effect of patient choice in an adaptive sequential randomization trial of treatment for alcohol and cocaine dependence. Journal of consulting and clinical psychology, 83(6), 1021."
-                )
-              )
-              ,
-              # Centered static table
-              div(
-                style = "display: flex; justify-content: center; margin-bottom: 20px;",
-                tags$table(
-                  style = "border-collapse: collapse; border: 1px solid #999;",
-                  tags$thead(
-                    tags$tr(
-                      tags$th(style = "border:1px solid #999; padding:8px;", "EI"),
-                      tags$th(style = "border:1px solid #999; padding:8px;", "Stage 1"),
-                      tags$th(style = "border:1px solid #999; padding:8px;", "After 1 month:"),
-                      tags$th(style = "border:1px solid #999; padding:8px;", "Stage 2")
-                    )
-                  ),
-                  tags$tbody(
-                    tags$tr(
-                      tags$td(rowspan = 2, style = "border:1px solid #999; padding:8px;", "1"),
-                      tags$td(rowspan = 2, style = "border:1px solid #999; padding:8px;", "MI-IOP"),
-                      tags$td(style = "border:1px solid #999; padding:8px;", "If response"),
-                      tags$td(style = "border:1px solid #999; padding:8px;", "NFC")
-                    ),
-                    tags$tr(
-                      tags$td(style = "border:1px solid #999; padding:8px;", "If non-response"),
-                      tags$td(style = "border:1px solid #999; padding:8px;", "MI-PC")
-                    ),
-                    tags$tr(
-                      tags$td(rowspan = 2, style = "border:1px solid #999; padding:8px;", "2"),
-                      tags$td(rowspan = 2, style = "border:1px solid #999; padding:8px;", "MI-IOP"),
-                      tags$td(style = "border:1px solid #999; padding:8px;", "If response"),
-                      tags$td(style = "border:1px solid #999; padding:8px;", "NFC")
-                    ),
-                    tags$tr(
-                      tags$td(style = "border:1px solid #999; padding:8px;", "If non-response"),
-                      tags$td(style = "border:1px solid #999; padding:8px;", "NFC")
-                    ),
-                    tags$tr(
-                      tags$td(rowspan = 2, style = "border:1px solid #999; padding:8px;", "3"),
-                      tags$td(rowspan = 2, style = "border:1px solid #999; padding:8px;", "MI-PC"),
-                      tags$td(style = "border:1px solid #999; padding:8px;", "If response"),
-                      tags$td(style = "border:1px solid #999; padding:8px;", "NFC")
-                    ),
-                    tags$tr(
-                      tags$td(style = "border:1px solid #999; padding:8px;", "If non-response"),
-                      tags$td(style = "border:1px solid #999; padding:8px;", "MI-PC")
-                    ),
-                    tags$tr(
-                      tags$td(rowspan = 2, style = "border:1px solid #999; padding:8px;", "4"),
-                      tags$td(rowspan = 2, style = "border:1px solid #999; padding:8px;", "MI-PC"),
-                      tags$td(style = "border:1px solid #999; padding:8px;", "If response"),
-                      tags$td(style = "border:1px solid #999; padding:8px;", "NFC")
-                    ),
-                    tags$tr(
-                      tags$td(style = "border:1px solid #999; padding:8px;", "If non-response"),
-                      tags$td(style = "border:1px solid #999; padding:8px;", "NFC")
-                    )
-                  )
-                )
-              )
-      ),
-      
-      # Applet tab: dropdown, plot, sliders, and table
+      # Applet tab: Now contains the Plot, Sliders, and the original Home content
       tabItem(tabName = "applet",
               # Centered dropdown for category selection
               div(
@@ -182,10 +94,26 @@ ui <- dashboardPage(
                   ),
                   sliderInput(
                     inputId = "slider3_plot",
-                    label = HTML("Switch Cost <span title='Switch cost: The implementation cost incurred by switching from delivering MI-IOP to delivering MI-PC'><i class='fas fa-info-circle'></i></span>"),  # Adding the info icon
+                    label = HTML("Switch Cost <span title='Switch Cost: The implementation cost incurred by switching from delivering MI-IOP to delivering MI-PC'><i class='fas fa-info-circle'></i></span>"),  # Adding the info icon
                     min = 0,
                     max = 200,
                     value = 0,
+                    width = "100%"
+                  ),
+                  sliderInput(
+                    inputId = "slider4_plot",
+                    label = HTML("Re-engagement Cost <span title='Re-engagement Cost: The implementation cost incurred by re-engaging those who did not respond to Stage 1'><i class='fas fa-info-circle'></i></span>"),  # Adding the info icon
+                    min = 0,
+                    max = 200,
+                    value = 0,
+                    width = "100%"
+                  ),
+                  sliderInput(
+                    inputId = "slider5_plot",
+                    label = HTML("Response Assesment Cost <span title='Response Assesment Cost: The cost assosciated with assessing response vs non-response after Stage 1'><i class='fas fa-info-circle'></i></span>"),  # Adding the info icon
+                    min = 0,
+                    max = 200,
+                    value = 50,
                     width = "100%"
                   ),
                   
@@ -196,15 +124,16 @@ ui <- dashboardPage(
                       class = "table-auto border-collapse border border-gray-400",
                       tags$thead(
                         tags$tr(
-                          tags$th("EI", class = "border px-4 py-2"),
+                          # Centered the header title
+                          tags$th("Intervention Version", class = "border px-4 py-2 text-center"), 
                           tags$th("Stage 1", class = "border px-4 py-2"),
-                          tags$th("After 1 month:", class = "border px-4 py-2"),
+                          tags$th("After 6 Weeks:", class = "border px-4 py-2"),
                           tags$th("Stage 2", class = "border px-4 py-2")
                         )
                       ),
                       tags$tbody(
                         tags$tr(
-                          tags$td("1", rowspan = 2, class = "border px-4 py-2"),
+                          tags$td("1", rowspan = 2, class = "border px-4 py-2 text-center", style = "vertical-align: middle;"),
                           tags$td("MI-IOP", rowspan = 2, class = "border px-4 py-2"),
                           tags$td("If response", class = "border px-4 py-2"),
                           tags$td("NFC", class = "border px-4 py-2")
@@ -214,7 +143,7 @@ ui <- dashboardPage(
                           tags$td("MI-PC", class = "border px-4 py-2")
                         ),
                         tags$tr(
-                          tags$td("2", rowspan = 2, class = "border px-4 py-2"),
+                          tags$td("2", rowspan = 2, class = "border px-4 py-2 text-center", style = "vertical-align: middle;"),
                           tags$td("MI-IOP", rowspan = 2, class = "border px-4 py-2"),
                           tags$td("If response", class = "border px-4 py-2"),
                           tags$td("NFC", class = "border px-4 py-2")
@@ -224,7 +153,7 @@ ui <- dashboardPage(
                           tags$td("NFC", class = "border px-4 py-2")
                         ),
                         tags$tr(
-                          tags$td("3", rowspan = 2, class = "border px-4 py-2"),
+                          tags$td("3", rowspan = 2, class = "border px-4 py-2 text-center", style = "vertical-align: middle;"),
                           tags$td("MI-PC", rowspan = 2, class = "border px-4 py-2"),
                           tags$td("If response", class = "border px-4 py-2"),
                           tags$td("NFC", class = "border px-4 py-2")
@@ -234,7 +163,7 @@ ui <- dashboardPage(
                           tags$td("MI-PC", class = "border px-4 py-2")
                         ),
                         tags$tr(
-                          tags$td("4", rowspan = 2, class = "border px-4 py-2"),
+                          tags$td("4", rowspan = 2, class = "border px-4 py-2 text-center", style = "vertical-align: middle;"),
                           tags$td("MI-PC", rowspan = 2, class = "border px-4 py-2"),
                           tags$td("If response", class = "border px-4 py-2"),
                           tags$td("NFC", class = "border px-4 py-2")
@@ -247,7 +176,40 @@ ui <- dashboardPage(
                     )
                   )
                 )
+              ),
+              
+              hr(), # Horizontal line to separate plot area from info text
+              
+              # --- START OF HOME CONTENT BLOCK (MARKER FOR EASY MOVING BACK) ---
+              div(
+                # CHANGED: set text-align: left and added padding for better document look
+                style = "text-align: left; padding-left: 20px; margin-top: 30px; margin-bottom: 20px; font-size: 20px;",
+                
+                p(style = "margin-bottom: 15px;",
+                  "This applet presents a case study for the determination of value efficiency in a sequential multiple assignment randomized trial (SMART), loosely based on the ENGAGE trial (McKay et al., 2015). 
+                  Among the set of alternative intervention versions (or in this case, embedded interventions) in an optimization trial, an intervention is value efficient if it is expected to produce desired outcomes without wasting resource, relative to affordable alternatives."
+                ),
+                
+                p(style = "margin-bottom: 15px;",
+                  "In the case study, we summarize the performance of the four intervention versions (embedded interventions) in this SMART in terms of their expected effectiveness and their resource use, defined in terms of the cost to deliver the intervention. 
+                  Costs are hypothetical; effectiveness data is simulated, based on real-world parameters from ENGAGE.
+                  We assume all alternatives are affordable."
+                ),
+                
+                p(style = "margin-bottom: 15px;",
+                  "The four alternative intervention versions provide different rounds of motivational interviewing and clinical outreach (MI-IOP, MI-PC, or both), as summarized in the table above. For more detail, see:"
+                ),
+                
+                p(style = "margin-bottom: 15px;",
+                  "Strayhorn et al. (2026).
+                  Value efficiency in intervention optimization. Annals of Behavioral Medicine."
+                ),
+                
+                p(
+                  "McKay, J. R., Drapkin, M. L., Van Horn, D. H., Lynch, K. G., Oslin, D. W., DePhilippis, D., . . . Cacciola, J. S. (2015). Effect of patient choice in an adaptive sequential randomization trial of treatment for alcohol and cocaine dependence. Journal of consulting and clinical psychology, 83(6), 1021."
+                )
               )
+              # --- END OF HOME CONTENT BLOCK ---
       )
     )
   )
@@ -276,10 +238,10 @@ server <- function(input, output, session) {
     data <- data %>%
       mutate(
         CostDisplay = case_when(
-          grepl("MP", ID) ~ input$slider1_plot + input$slider2_plot + input$slider3_plot,
-          grepl("MM", ID) ~ input$slider1_plot,
-          grepl("PP", ID) ~ input$slider2_plot * 2,
-          grepl("PM", ID) ~ input$slider2_plot,
+          grepl("MP", ID) ~ input$slider1_plot + input$slider2_plot + input$slider3_plot + input$slider4_plot + input$slider5_plot,
+          grepl("MM", ID) ~ input$slider1_plot + input$slider5_plot,
+          grepl("PP", ID) ~ (2 * input$slider2_plot + input$slider4_plot + input$slider5_plot),
+          grepl("PM", ID) ~ input$slider2_plot + input$slider5_plot,
           TRUE ~ Cost  # Fallback to original if no match
         ),
         CostHover = CostDisplay,
@@ -301,14 +263,14 @@ server <- function(input, output, session) {
       # For ADI 1: response prob and expected cost
       p_r_1 <- rbeta(M, shape1 = 46 + 1, shape2 = 44 + 1)  # Beta for response rate
       p_nr_1 <- 1 - p_r_1
-      exp_c_1 <- p_r_1 * input$slider1_plot + p_nr_1 * (input$slider1_plot + input$slider2_plot + input$slider3_plot)
+      exp_c_1 <- p_r_1 * (input$slider1_plot) + p_nr_1 * (input$slider1_plot + input$slider2_plot + input$slider3_plot + input$slider4_plot) + input$slider5_plot
       mean_c_1 <- mean(exp_c_1)  # Average cost
       error_c_1 <- 1.645*sd(exp_c_1)  # Standard deviation as error
       
       # For ADI 3: response prob and expected cost (no switch)
       p_r_3 <- rbeta(M, shape1 = 66 + 1, shape2 = 44 + 1)  # Beta for response rate
       p_nr_3 <- 1 - p_r_3
-      exp_c_3 <- p_r_3 * input$slider2_plot + p_nr_3 * (2 * input$slider2_plot)
+      exp_c_3 <- p_r_3 * (input$slider2_plot) + p_nr_3 * (2 * input$slider2_plot + input$slider4_plot) + input$slider5_plot
       mean_c_3 <- mean(exp_c_3)  # Average cost
       error_c_3 <- 1.645*sd(exp_c_3)  # Standard deviation as error
       
@@ -437,14 +399,13 @@ server <- function(input, output, session) {
     # Building the base ggplot
     p <- ggplot(data, aes(x = ContrastEstimates, y = CostDisplay, color = I(colors), shape = factor(ADI),
                           text = paste(
-                            "<b>ID</b>: ", ID, "<br>",
-                            "<b>Contrast Estimate</b>: ", round(ContrastEstimates, 2), "<br>",
-                            "<b>Cost</b>: ", ifelse(ADI %in% c(2, 4), CostHover, round(CostDisplay, 3)), "<br>",
+                            "<b>Intervention Version</b>: ", ADI, "<br>", # CHANGED EI TO Intervention Version,
+                            "<b>Expected Value</b>: ", round(ContrastEstimates, 2), "<br>",
                             "<b>90% CI Half-Width</b>: ", round((((ContrastUpper95-ContrastLower95)/2)/1.1913), 3), "<br>", #converted to 90%ci
-                            "<b>EI</b>: ", ADI, "<br>",
+                            "<b>Cost</b>: ", ifelse(ADI %in% c(2, 4), CostHover, round(CostDisplay, 3)), "<br>",
                             "<b>Cost Error</b>: ", ifelse(ADI %in% c(2, 4), "undefined", round(CostError, 3))
                           ))) +
-      geom_point(size = 3) +
+      geom_point(size = 8) +
       # Horizontal error bars for contrasts
       geom_errorbarh(
         aes(xmin = ContrastEstimates - (((ContrastUpper95-ContrastLower95)/2)/1.1913), # convert to 90% CI
@@ -458,11 +419,11 @@ server <- function(input, output, session) {
         width = 0.5  # A bit wider for visibility
       ) +
       # Custom shapes for ADI levels
-      scale_shape_manual(values = c(15, 16, 17, 18), name = "EI", labels = c("1", "2", "3", "4")) +
+      scale_shape_manual(values = c(15, 16, 17, 18), name = "Intervention Version", labels = c("1", "2", "3", "4")) +
       scale_color_identity() +  # Use the colors we set
       labs(
         #title = paste(input$time_select, ": Cost vs Expected Treatment Readiness with Errors"),
-        x = "Expected Treatment Readiness at 3 months",
+        x = "Expected Value",
         y = "Total Cost"
       ) +
       scale_y_continuous(breaks = seq(0, 1000, by = 100)) +
